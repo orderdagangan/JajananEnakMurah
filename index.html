@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dagangan Puput</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+
+body{
+  background: linear-gradient(135deg,#c8facc,#ffffff,#b2f5c2);
+  overflow-x:hidden;
+  color:#1b5e20;
+}
+
+/* HEADER */
+header{
+  padding:40px;
+  text-align:center;
+}
+
+/* HORIZONTAL SCROLL */
+.wrapper{
+  display:flex;
+  gap:40px;
+  padding:60px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+}
+
+.wrapper::-webkit-scrollbar{
+  height:8px;
+}
+.wrapper::-webkit-scrollbar-thumb{
+  background:#4caf50;
+  border-radius:10px;
+}
+
+/* GLASS CARD */
+.card{
+  min-width:320px;
+  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.25);
+  border:1px solid rgba(255,255,255,0.4);
+  border-radius:25px;
+  padding:25px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.15);
+  transition:0.4s;
+  animation:float 6s ease-in-out infinite;
+}
+
+.card:hover{
+  transform:rotateY(8deg) scale(1.05);
+  box-shadow:0 20px 40px rgba(0,0,0,0.25);
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:15px;
+  margin-bottom:15px;
+}
+
+input,textarea{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:none;
+}
+
+textarea{resize:none;height:60px}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:15px;
+  background:#4caf50;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#1b5e20;
+  transform:scale(1.08);
+}
+
+/* CART */
+.cart{
+  margin:60px;
+  padding:30px;
+  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.3);
+  border-radius:25px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.2);
+}
+
+footer{
+  text-align:center;
+  padding:40px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dagangan Puput 🌿</h1>
+  <p>Geser ke samping buat lihat menu ➡️ | Order 📲 62 83121533161</p>
+</header>
+
+<div class="wrapper">
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?fried,snack">
+<h2>Cireng Isi Ayam 🧆</h2>
+<input type="number" placeholder="Masukkan harga (contoh 10 = 10k)">
+<textarea placeholder="Contoh: 10k balado + jagung manis"></textarea>
+<button onclick="addToCart('Cireng Isi Ayam',this)">Tambah 🛒</button>
+</div>
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?fruit,cup">
+<h2>Es Buah 🥤🍓</h2>
+<input type="number" placeholder="Masukkan harga (contoh 5 = 5k)">
+<textarea placeholder="Contoh: 5k tanpa susu + extra buah"></textarea>
+<button onclick="addToCart('Es Buah',this)">Tambah 🛒</button>
+</div>
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?spicy,noodles">
+<h2>Seblak 🍜🌶️</h2>
+<input type="number" placeholder="Masukkan harga (contoh 5 = 5k)">
+<textarea placeholder="Contoh: 10k pedas level 3 + sosis"></textarea>
+<button onclick="addToCart('Seblak',this)">Tambah 🛒</button>
+</div>
+
+</div>
+
+<div class="cart">
+<h3>Order Kamu 🛍️</h3>
+<ul id="cartList"></ul>
+<p><strong>Total 💰: <span id="total">0</span>k</strong></p>
+<button onclick="checkoutWA()">Checkout 🚀</button>
+</div>
+
+<footer>
+© 2026 Dagangan Puput 🌿
+</footer>
+
+<script>
+let total=0;
+let cart=[];
+
+function addToCart(nama,btn){
+let card=btn.parentElement;
+let harga=parseInt(card.querySelector("input").value);
+let ket=card.querySelector("textarea").value;
+
+if(!harga||harga<=0){
+alert("Isi harga dulu.");
+return;
+}
+
+cart.push({nama,harga,ket});
+total+=harga;
+renderCart();
+}
+
+function renderCart(){
+let list=document.getElementById("cartList");
+list.innerHTML="";
+cart.forEach(item=>{
+let li=document.createElement("li");
+li.textContent=item.nama+" - "+item.harga+"k | "+item.ket;
+list.appendChild(li);
+});
+document.getElementById("total").textContent=total;
+}
+
+function checkoutWA(){
+if(cart.length===0){
+alert("Keranjang kosong!");
+return;
+}
+let pesan="Halo, saya mau pesan:%0A";
+cart.forEach(item=>{
+pesan+="- "+item.nama+" "+item.harga+"k ("+item.ket+")%0A";
+});
+pesan+="Total: "+total+"k";
+window.open("https://wa.me/6283121533161?text="+pesan);
+}
+</script>
+
+</body>
+  </html>
