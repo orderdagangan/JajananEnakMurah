@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dagangan Puput</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+
+body{
+  background: linear-gradient(180deg,#c8facc,#ffffff,#b2f5c2);
+  min-height:100vh;
+  color:#2e7d32;
+  overflow-x:hidden;
+}
+
+/* background floating bubble */
+.bubble{
+  position:fixed;
+  bottom:-100px;
+  background:rgba(76,175,80,0.15);
+  border-radius:50%;
+  animation:floatUp 15s linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(1);}
+  100%{transform:translateY(-120vh) scale(1.2);}
+}
+
+header{
+  padding:50px 20px;
+  text-align:center;
+}
+header h1{font-size:36px}
+header p{margin-top:10px}
+
+.section{padding:60px 10%}
+
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.1);
+  transition:0.4s;
+  animation:softFloat 4s ease-in-out infinite;
+}
+
+@keyframes softFloat{
+  0%,100%{transform:translateY(0px);}
+  50%{transform:translateY(-8px);}
+}
+
+.card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-radius:15px;
+}
+
+.card h2{margin:12px 0}
+.price{font-weight:600;margin-bottom:10px}
+
+input{
+  width:100%;
+  padding:8px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-bottom:10px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  background:#4caf50;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#2e7d32;
+  transform:scale(1.05);
+}
+
+.cart,.payment{
+  background:white;
+  margin-top:50px;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.1);
+  animation:softFloat 5s ease-in-out infinite;
+}
+
+footer{
+  text-align:center;
+  padding:40px;
+}
+
+.qris-img{
+  width:220px;
+  margin-top:15px;
+}
+</style>
+</head>
+<body>
+
+<!-- floating bubbles -->
+<div class="bubble" style="left:10%;width:60px;height:60px;animation-duration:18s;"></div>
+<div class="bubble" style="left:40%;width:40px;height:40px;animation-duration:22s;"></div>
+<div class="bubble" style="left:70%;width:80px;height:80px;animation-duration:25s;"></div>
+
+<header>
+  <h1>Dagangan Puput 🌿</h1>
+  <p>Jajanan enak & harga ramah kantong 💸 | Order cepat 📲 62 83121533161</p>
+</header>
+
+<section class="section">
+<div class="container">
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?fried,snack" alt="">
+<h2>Cireng Isi Ayam 🧆</h2>
+<div class="price">1k / pcs</div>
+<input type="number" placeholder="Custom harga (opsional)">
+<button onclick="addToCart('Cireng Isi Ayam',1,this)">Tambah 🛒✨</button>
+</div>
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?fruit,cup" alt="">
+<h2>Es Buah 🥤🍓</h2>
+<div class="price">5k</div>
+<input type="number" placeholder="Custom harga (opsional)">
+<button onclick="addToCart('Es Buah',5,this)">Tambah 🛒❄️</button>
+</div>
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?spicy,noodles" alt="">
+<h2>Seblak 🍜🌶️</h2>
+<div class="price">5k</div>
+<input type="number" placeholder="Custom harga (opsional)">
+<button onclick="addToCart('Seblak',5,this)">Tambah 🛒🔥</button>
+</div>
+
+</div>
+
+<div class="cart">
+<h3>Order Kamu 🛍️✨</h3>
+<ul id="cartList"></ul>
+<p><strong>Total Bayar 💰: <span id="total">0</span>k</strong></p>
+<button onclick="checkoutWA()">Checkout Sekarang 🚀📲</button>
+</div>
+
+<div class="payment">
+<h3>Pembayaran QRIS 💳📷</h3>
+<p>Scan QRIS di bawah untuk bayar langsung.</p>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=DaganganPuputQRIS" class="qris-img">
+<p style="margin-top:10px;">Kirim bukti transfer ke WhatsApp setelah bayar ya 📲</p>
+</div>
+
+</section>
+
+<footer>
+© 2026 Dagangan Puput 🌿 | Siap bikin nagih 🤤
+</footer>
+
+<script>
+let total=0;
+let cart=[];
+
+function addToCart(nama,hargaDefault,btn){
+const input=btn.previousElementSibling;
+let hargaCustom=parseInt(input.value);
+let finalHarga=(hargaCustom && hargaCustom>0)?hargaCustom:hargaDefault;
+cart.push({nama,finalHarga});
+total+=finalHarga;
+renderCart();
+}
+
+function renderCart(){
+const list=document.getElementById("cartList");
+list.innerHTML="";
+cart.forEach(item=>{
+const li=document.createElement("li");
+li.textContent=item.nama+" - "+item.finalHarga+"k";
+list.appendChild(li);
+});
+document.getElementById("total").textContent=total;
+}
+
+function checkoutWA(){
+if(cart.length===0){
+alert("Keranjang kosong!");
+return;
+}
+let pesan="Halo, saya mau pesan:%0A";
+cart.forEach(item=>{
+pesan+="- "+item.nama+" "+item.finalHarga+"k%0A";
+});
+pesan+="Total: "+total+"k";
+window.open("https://wa.me/6283121533161?text="+pesan);
+}
+</script>
+
+</body>
+  </html>
