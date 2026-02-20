@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dagangan Puput</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{
+  background: linear-gradient(-45deg,#c8facc,#ffffff,#b2f5c2,#d4ffe0);
+  background-size:400% 400%;
+  animation:gradientMove 12s ease infinite;
+  overflow-x:hidden;
+  color:#1b5e20;
+}
+@keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+header{padding:40px;text-align:center;}
+.wrapper{display:flex;gap:40px;padding:60px;overflow-x:auto;scroll-behavior:smooth;}
+.wrapper::-webkit-scrollbar{height:8px;}
+.wrapper::-webkit-scrollbar-thumb{background:#4caf50;border-radius:10px;}
+.card{min-width:320px;backdrop-filter: blur(25px);background: rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.5);border-radius:25px;padding:25px;box-shadow:0 20px 40px rgba(0,0,0,0.15);transition:0.4s;animation:float 6s ease-in-out infinite;}
+.card:hover{transform:scale(1.07);box-shadow:0 25px 50px rgba(0,0,0,0.25);}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:15px;margin-bottom:15px;}
+input,textarea{width:100%;padding:8px;margin-bottom:10px;border-radius:10px;border:none;}
+textarea{resize:none;height:60px;}
+button{width:100%;padding:12px;border:none;border-radius:15px;background:#4caf50;color:white;font-weight:600;cursor:pointer;transition:0.3s;}
+button:hover{background:#1b5e20;transform:scale(1.05);box-shadow:0 0 20px rgba(76,175,80,0.7);}
+.cart{margin:60px;padding:30px;backdrop-filter: blur(25px);background: rgba(255,255,255,0.25);border-radius:25px;box-shadow:0 20px 40px rgba(0,0,0,0.2);}
+.cart button{margin-top:5px;width:auto;padding:6px 12px;font-size:12px;}
+footer{text-align:center;padding:40px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dagangan Puput 🌿</h1>
+  <p>Geser ke samping ➡️ | Order 📲 62 83121533161</p>
+</header>
+
+<div class="wrapper">
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?fried,snack">
+<h2>Cireng Isi Ayam 🧆</h2>
+<input type="number" placeholder="Masukkan harga (contoh 10000 = Rp10.000)">
+<textarea placeholder="Contoh: Rp10.000 balado + jagung manis"></textarea>
+<button onclick="addToCart('Cireng Isi Ayam',this)">Tambah 🛒</button>
+</div>
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?fruit,cup">
+<h2>Es Buah 🥤🍓</h2>
+<input type="number" placeholder="Masukkan harga (contoh 5000 = Rp5.000)">
+<textarea placeholder="Contoh: Rp5.000 tanpa susu + extra buah"></textarea>
+<button onclick="addToCart('Es Buah',this)">Tambah 🛒</button>
+</div>
+
+<div class="card">
+<img src="https://source.unsplash.com/400x300/?spicy,noodles">
+<h2>Seblak 🍜🌶️</h2>
+<input type="number" placeholder="Masukkan harga (contoh 5000 = Rp5.000)">
+<textarea placeholder="Contoh: Rp10.000 level 3 + sosis"></textarea>
+<button onclick="addToCart('Seblak',this)">Tambah 🛒</button>
+</div>
+
+</div>
+
+<div class="cart">
+<h3>List Pesanan 🧾</h3>
+<ul id="cartList"></ul>
+<p><strong>Total 💰: Rp<span id="total">0</span></strong></p>
+<button onclick="checkoutWA()">Checkout 🚀</button>
+
+<br><br>
+<h3>Pembayaran QRIS 📲</h3>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=DaganganPuput-6283121533161">
+<p>Scan untuk bayar</p>
+</div>
+
+<footer>
+© 2026 Dagangan Puput 🌿
+</footer>
+
+<script>
+let total=0;
+let cart=[];
+
+function addToCart(nama,btn){
+let card=btn.parentElement;
+let harga=parseInt(card.querySelector("input").value);
+let ket=card.querySelector("textarea").value;
+
+if(!harga||harga<=0){
+alert("Isi harga dulu.");
+return;
+}
+
+cart.push({nama,harga,ket});
+updateTotal();
+renderCart();
+}
+
+function formatRupiah(num){
+  return num.toLocaleString('id-ID');
+}
+
+function updateTotal(){
+total=0;
+cart.forEach(item=>{
+total+=item.harga;
+});
+document.getElementById("total").textContent=formatRupiah(total);
+}
+
+function renderCart(){
+let list=document.getElementById("cartList");
+list.innerHTML="";
+
+cart.forEach((item,index)=>{
+let li=document.createElement("li");
+li.innerHTML=`
+<b>${item.nama}</b> - Rp${formatRupiah(item.harga)} <br>
+<small>${item.ket}</small><br>
+<button onclick="doubleItem(${index})">+1 🔁</button>
+<button onclick="removeItem(${index})">Hapus ❌</button>
+<hr>
+`;
+list.appendChild(li);
+});
+}
+
+function removeItem(index){
+cart.splice(index,1);
+updateTotal();
+renderCart();
+}
+
+function doubleItem(index){
+cart.push({...cart[index]});
+updateTotal();
+renderCart();
+}
+
+function checkoutWA(){
+if(cart.length===0){
+alert("Pesanan kosong!");
+return;
+}
+
+let pesan="Halo, saya mau pesan:%0A";
+cart.forEach(item=>{
+pesan+="- "+item.nama+" Rp"+formatRupiah(item.harga)+" ("+item.ket+")%0A";
+});
+pesan+="Total: Rp"+formatRupiah(total);
+
+window.open("https://wa.me/6283121533161?text="+pesan);
+}
+</script>
+
+</body>
+  </html>
